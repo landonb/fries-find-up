@@ -1,0 +1,70 @@
+fries-findup(1) -- Bash "Invursive" up-dir file finder
+======================================================
+
+
+SYNOPSIS
+--------
+
+findup [-v|--version] [-h|--help] <name>
+
+<name> is the file name to search for.
+
+
+DESCRIPTION
+-----------
+
+`fries-findup` is a simple shell function to walk up a directory
+tree searching for a matching file.
+
+A common use case is being inside a subdirectory of a project and
+looking for a project stored at the root of the project. E.g., you
+could find the root of a git repo by looking up-path for a ".git"
+directory.
+
+
+OPTIONS
+-------
+
+  * `-h`, `--help`:
+    Display short help message
+
+  * `-v`, `--version`:
+    Display the version number
+
+
+OUTPUT
+------
+
+Prints the path name of the matching file, if found.
+
+For example,
+
+    $ tmpdir=$(mktemp -d)
+    $ cd $tmpdir
+    $ git init .
+    $ mkdir test
+    $ cd test
+    $ invursive_find .git
+    /tmp/tmp.XXXXXXXXXX/.git
+
+
+EXIT STATUS
+-----------
+
+The `invursive_find` function returns a value of `0` if a matching file
+is found, or `1` if no file was found.
+
+
+SEE ALSO
+--------
+
+Project page: _https://github.com/landonb/fries-findup_
+
+
+COPYRIGHT
+---------
+
+(c) 2018 Landon Bouma
+
+fries-findup is released under the terms of an AGPLv3 license.
+
