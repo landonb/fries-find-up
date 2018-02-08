@@ -2,7 +2,7 @@
 
 GH_USER='landonb'
 GH_REPO='fries-findup'
-VERSION=0.0.2
+VERSION=0.0.3
 
 TMPDIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'tmp')
 
