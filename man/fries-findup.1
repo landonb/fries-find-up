@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "FRIES\-FINDUP" "1" "2018-02-07" "" ""
+.TH "FRIES\-FINDUP" "1" "February 2018" "" ""
 .
 .SH "NAME"
 \fBfries\-findup\fR \- Bash "Invursive" up\-dir file finder
@@ -77,13 +77,13 @@ For example, you\'ll see the same output for some searches,
 
 $ cd path/to/fries\-findup/bin
 
-$ \./fries\-findup\.sh README\.rst
+$ fries\-findup README\.rst
 path/to/fries\-findup/README\.rst
 
-$ \./fries\-findup\.sh \. README\.rst
+$ fries\-findup \. README\.rst
 path/to/fries\-findup/README\.rst
 
-$ \./fries\-findup\.sh \. \-name README\.rst
+$ fries\-findup \. \-name README\.rst
 path/to/fries\-findup/README\.rst
 .
 .fi
@@ -99,11 +99,11 @@ but not for others,
 
 $ cd path/to/fries\-findup/bin
 
-$ \./fries\-findup\.sh "*I*N*"
+$ fries\-findup "*I*N*"
 
-$ \./fries\-findup\.sh \. "*I*N*"
+$ fries\-findup \. "*I*N*"
 
-$ \./fries\-findup\.sh \. \-name "*I*N*"
+$ fries\-findup \. \-name "*I*N*"
 path/to/fries\-findup/LICENSE
 path/to/fries\-findup/VERSION
 .
