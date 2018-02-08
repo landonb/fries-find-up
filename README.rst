@@ -142,7 +142,7 @@ If you've come this far, you naturally know how to load shell scripts!
 
 You can easily source the script for a one-off test::
 
-  $ source anywhere/you/like/bin/fries-findup.sh
+  $ source anywhere/you/like/bin/fries-findup
   $ fries-findup
 
 But you probably want to install to a directory on ``PATH``, or to update
@@ -153,7 +153,7 @@ But you probably want to install to a directory on ``PATH``, or to update
   For example, a script that uses this library might look like::
 
     #!/bin/bash
-    source 'fries-findup.sh'
+    source 'fries-findup'
     fries-findup somefile
 
 - You probably have your own *dotfile* conventions for extending ``PATH``
@@ -161,7 +161,7 @@ But you probably want to install to a directory on ``PATH``, or to update
 
   If not, you might want to consider a helper function, such as
   ``path_add_part`` from `fries-pathadd
-  <https://github.com/landonb/fries-pathadd/blob/master/bin/fries-pathadd.sh#L24>`__,
+  <https://github.com/landonb/fries-pathadd/blob/master/bin/fries-pathadd#L24>`__,
   to add to ``PATH`` without creating duplicate entries.
 
   Or, if you are lazy and just wanna wing it, you can run this command
@@ -171,7 +171,7 @@ But you probably want to install to a directory on ``PATH``, or to update
 
   And you can run this command to load the function into your shell sessions::
 
-    $ echo 'source "anywhere/you/like/bin/fries-findup.sh"' >> ~/.bashrc
+    $ echo 'source "anywhere/you/like/bin/fries-findup"' >> ~/.bashrc
 
 ==============
 Uninstallation

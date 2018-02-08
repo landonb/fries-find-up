@@ -2,7 +2,7 @@
   "name": "fries-findup",
   "version": "0.0.2",
   "description": "Home-fries \"invursive\" up-path `find` wrapper",
-  "scripts": [ "bin/fries-findup.sh" ],
+  "scripts": [ "bin/fries-findup" ],
   "install": "make install"
 }
 

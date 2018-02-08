@@ -102,17 +102,6 @@ fries-findup () {
       # and allows arbitrary arguments to `find`, so we cannot sanely
       # determine a single invursive_path match to return. But `find`
       # should generate its own output, so we're totes okay.
-      # E.g., these all return the same:
-      #   $ cd path/to/fries-findup/bin
-      #
-      #   $ ./fries-findup.sh README.rst
-      #   path/to/fries-findup/README.rst
-      #
-      #   $ ./fries-findup.sh . README.rst
-      #   path/to/fries-findup/README.rst
-      #
-      #   $ ./fries-findup.sh . -name README.rst
-      #   path/to/fries-findup/README.rst
     fi
     # Get the parent directory.
     # - If you want to follow symlinks:
