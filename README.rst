@@ -65,6 +65,8 @@ Choose wisely:
 
 - Install for development (symlinks).
 
+Note: Be sure to ``source`` the script after installing it!
+
 Read along for specific instructions.
 
 Install Systemwide
@@ -107,6 +109,10 @@ Run any of these commands as the superuser to install systemwide to ``/usr/local
 
     $ clib install landonb/fries-findup
 
+After installing, source the installed file (see below for doing this automatically)::
+
+  source /usr/local/bin/fries-findup
+
 Install Locally
 ---------------
 
@@ -138,6 +144,13 @@ Install to Develop
     $ PREFIX=anywhere/you/like make link
 
   Then you can edit files and re-source the code all you want.
+
+Source It
+~~~~~~~~~
+
+After installing, source the installed file (see below for doing this automatically)::
+
+  source anywhere/you/like/bin/fries-findup
 
 Update ``$PATH``
 ----------------
