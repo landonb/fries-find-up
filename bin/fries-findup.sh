@@ -10,16 +10,15 @@ print_version_and_exit () {
 }
 
 print_help_and_exit () {
-  >&2 echo "Usage: fries-findup [-v|--version] [-h|--help] <name>"
-  >&2 echo "See \`man fries-findup\` for more help"
-  #>&2 echo ""
+  >&2 echo 'Usage: fries-findup [-v|--version] [-h|--help] <name>'
+  >&2 echo 'See `man fries-findup` for more help'
   exit 0
 }
 
-parse_args () {
-  local filepath=""
+parse_first_positional () {
+  local first_one=''
   local skip_opts=false
-  while [[ "$1" != "" ]]; do
+  while [[ "$1" != '' ]]; do
     if [[ "$1" == '--' ]]; then
       skip_opts=true
       shift
@@ -40,29 +39,42 @@ parse_args () {
           ;;
       esac
     fi
-    if [[ -n ${filepath} ]]; then
-      >&2 echo 'Please specify only 1 name'
-      exit 2
+    if [[ -z ${first_one} ]]; then
+      first_one=$1
     fi
-    filepath=$1
     shift
   done
-  if [[ -z ${filepath} ]]; then
-    >&2 echo 'ERROR: Please specify a file.'
+  if [[ -z ${first_one} ]]; then
+    >&2 echo 'Missing one of: <exact-name> | <start-directory> <exact-name> | <directory> <arg-to-`find`> <arg-to-`find`>...'
     exit 2
   fi
-  echo "${filepath}"
+  echo "${first_one}"
 }
 
 # Walk up the path looking for a file with the matching name.
 fries-findup () {
-  # We want the return value of the subshell, and not the `local`
-  # operator, so split the two operations.
-  local filepath; filepath=$(parse_args "${@}") || return $?
-  [[ -z ${filepath} ]] && return # Only if -v|--version.
+  local firstarg; first_one=$(parse_first_positional "${@}") || return $?
+  # File path is empty if command already handled, e.g., -v, or -h, etc.
+  [[ -z ${first_one} ]] && return
+  # Shake off $first_one. Remainder is optional arguments to `find`.
+  shift
 
-  local filename=$(basename -- "${filepath}")
-  local dirpath=$(dirname -- "${filepath}")
+  local filename=''
+  local dirpath=''
+  if [[ ${#} -eq 0 ]]; then
+    filename=$(basename -- "${first_one}")
+    dirpath=$(dirname -- "${first_one}")
+  else
+    # 2 or 3+ args: first one is directory.
+    dirpath=${first_one}
+    # If just 2 args, second is filename; otherwise, 3+ args,
+    # and we pass everything except directory path to `find`.
+    if [[ ${#} -eq 1 ]]; then
+      # User specified 2 args: directory to start from, and file to find.
+      filename=$1
+      shift
+    fi
+  fi
 
   # Deal only in full paths.
   # Symlinks okay (hence not `pwd -P` or `readlink -f`).
@@ -72,15 +84,42 @@ fries-findup () {
 
   # "Invursive path", i.e., opposite of recursive find.
   local invursive_path=''
+
   # We don't return things from file system root. Because safer?
+  # (I.e., if you want something from /, you just get it.)
   while [[ ${dirpath} != '/' ]]; do
-    # FIXME/2018-02-07: Add option to find just file, or just dir?
-    # E.g.,
-    #   if [[ ! ${files_only} || -f ${dirpath}/${filename} ]]; then ... fi
-    if [[ -e ${dirpath}/${filename} ]]; then
-      invursive_path="${dirpath}/${filename}"
-      break
+    if [[ ${#} -eq 0 ]]; then
+      # User simply indicated a file to find. We can be dumb about it.
+      if [[ -e ${dirpath}/${filename} ]]; then
+        invursive_path="${dirpath}/${filename}"
+        break
+      fi
+    else
+      # Call `find` command with whatever gibberish user supplied.
+      # MAYBE/2018-02-07: Add option, e.g., --limit, to stop early.
+      find "${dirpath}" -maxdepth 1 -mindepth 1 "$@" || return
+      # The find variant of this function acts on multiple ancestors
+      # and allows arbitrary arguments to `find`, so we cannot sanely
+      # determine a single invursive_path match to return. But `find`
+      # should generate its own output, so we're totes okay.
+      # E.g., these all return the same:
+      #   $ cd path/to/fries-findup/bin
+      #
+      #   $ ./fries-findup.sh README.rst
+      #   path/to/fries-findup/README.rst
+      #
+      #   $ ./fries-findup.sh . README.rst
+      #   path/to/fries-findup/README.rst
+      #
+      #   $ ./fries-findup.sh . -name README.rst
+      #   path/to/fries-findup/README.rst
     fi
+    # Get the parent directory.
+    # - If you want to follow symlinks:
+    #  dirpath="$(readlink -f "${dirpath}"/..)"
+    # - If you want to be literal (not follow symlinks) but not use dirname?:
+    #  dirpath="$(realpath -s "${dirpath}"/..)"
+    # - Easy answer:
     dirpath=$(dirname -- "${dirpath}")
   done
 
@@ -91,11 +130,15 @@ fries-findup () {
   #       if ... fi
   #   done
 
-  if [[ -n "${invursive_path}" ]]; then
-    echo "${invursive_path}"
-    return 0
+  if [[ ${#} -eq 0 ]]; then
+    if [[ -n "${invursive_path}" ]]; then
+      echo "${invursive_path}"
+      return 0
+    else
+      return 1
+    fi
   else
-    return 1
+    return 0
   fi
 }
 
