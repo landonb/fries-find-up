@@ -76,7 +76,11 @@ Run any of these commands as the superuser to install systemwide to ``/usr/local
 
   ::
 
-    $ curl -Lo- "https://raw.githubusercontent.com/landonb/fries-findup/install.sh" | bash
+    $ curl -Lo- "https://raw.githubusercontent.com/landonb/fries-findup/master/install.sh" | bash
+
+  Which, if you trust me, you could run as root::
+
+    sudo /bin/bash -c 'curl -Lo- "https://raw.githubusercontent.com/landonb/fries-findup/master/install.sh" | bash'
 
 - Install systemwide using
   `bpkg <https://github.com/bpkg/bpkg>`__,
