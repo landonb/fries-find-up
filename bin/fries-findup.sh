@@ -1,7 +1,7 @@
 #!/bin/bash
 # vim:tw=0:ts=2:sw=2:et:ft=sh:
 
-VERSION=0.0.1
+VERSION=0.0.2
 
 print_version_and_exit () {
   # NOTE: If sourced and called, then $(basename -- $0) is 'bash'.
