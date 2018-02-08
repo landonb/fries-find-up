@@ -53,7 +53,11 @@ parse_first_positional () {
 
 # Walk up the path looking for a file with the matching name.
 fries-findup () {
-  local firstarg; first_one=$(parse_first_positional "${@}") || return $?
+  # Note: `local var=$(cmd)` always returns local's status of 0, so
+  #       declare first, and then set it, as two separate operations.
+  local first_one
+  first_one=$(parse_first_positional "${@}") || return $?
+
   # File path is empty if command already handled, e.g., -v, or -h, etc.
   [[ -z ${first_one} ]] && return
 
