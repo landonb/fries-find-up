@@ -7,13 +7,25 @@
 \fBfries\-findup\fR \- Bash "Invursive" up\-dir file finder
 .
 .SH "SYNOPSIS"
-findup [\-v|\-\-version] [\-h|\-\-help] \fIname\fR
+findup [\-v|\-\-version] [\-h|\-\-help] \fIexact\-name\fR
 .
 .P
-\fIname\fR is the file name to search for\.
+findup [\-v|\-\-version] [\-h|\-\-help] \fIstart\-directory\fR \fIexact\-name\fR
+.
+.P
+findup [\-v|\-\-version] [\-h|\-\-help] \fIstart\-directory\fR \fIarg\-to\-`find`\fR \fIarg\-to\-`find`\fR\.\.\.
+.
+.P
+\fIexact\-name\fR is the exact file name for which to search\.
+.
+.P
+\fIstart\-directory\fR is the path to the directory from which to start searching\. If not specified, defaults to the current directory\.
+.
+.P
+\fIarg\-to\-`find`\fR\.\.\. are 2 or more arguments to pass to the \fBfind\fR command, instead of searching for an exact file name to match\.
 .
 .SH "DESCRIPTION"
-\fBfries\-findup\fR is a simple shell function to walk up a directory tree searching for a matching file\.
+\fBfries\-findup\fR is a simple shell function to walk up a directory tree searching for a matching file, or to walk up a directory tree and run the `find` command on each ancestor\.
 .
 .P
 A common use case is being inside a subdirectory of a project and looking for a project stored at the root of the project\. E\.g\., you could find the root of a git repo by looking up\-path for a "\.git" directory\.
@@ -29,7 +41,7 @@ Display short help message
 Display the version number
 .
 .SH "OUTPUT"
-Prints the path name of the matching file, if found\.
+If an \fIexact\-name\fR is specified, prints the path name of the first matching file of the same exact name, if found\.
 .
 .P
 For example,
@@ -39,19 +51,74 @@ For example,
 .nf
 
 $ tmpdir=$(mktemp \-d)
-$ cd $tmpdir
+$ cd ${tmpdir}
 $ git init \.
 $ mkdir test
 $ cd test
-$ invursive_find \.git
+$ fries\-findup \.git
 /tmp/tmp\.XXXXXXXXXX/\.git
 .
 .fi
 .
 .IP "" 0
 .
+.P
+If a \fIstart\-directory\fR and an \fIexact\-name\fR are specified, searches up from the starting directory and prints the path name of the first matching file found\.
+.
+.P
+If 2 or more \fIarg\-to\-find\fR are specified, prints whatever the \fBfind\fR command outputs\.
+.
+.P
+For example, you\'ll see the same output for some searches,
+.
+.IP "" 4
+.
+.nf
+
+$ cd path/to/fries\-findup/bin
+
+$ \./fries\-findup\.sh README\.rst
+path/to/fries\-findup/README\.rst
+
+$ \./fries\-findup\.sh \. README\.rst
+path/to/fries\-findup/README\.rst
+
+$ \./fries\-findup\.sh \. \-name README\.rst
+path/to/fries\-findup/README\.rst
+.
+.fi
+.
+.IP "" 0
+.
+.P
+but not for others,
+.
+.IP "" 4
+.
+.nf
+
+$ cd path/to/fries\-findup/bin
+
+$ \./fries\-findup\.sh "*I*N*"
+
+$ \./fries\-findup\.sh \. "*I*N*"
+
+$ \./fries\-findup\.sh \. \-name "*I*N*"
+path/to/fries\-findup/LICENSE
+path/to/fries\-findup/VERSION
+.
+.fi
+.
+.IP "" 0
+.
 .SH "EXIT STATUS"
-The \fBinvursive_find\fR function returns a value of \fB0\fR if a matching file is found, or \fB1\fR if no file was found\.
+If searching for an \fIexact\-name\fR and a matching file is found, returns \fB0\fR; otherwise returns \fB1\fR\.
+.
+.P
+If 2 or more \fIarg\-to\-find\fR are specified and using `find`, returns the first non\-zero `find` return value, or \fB0\fR if every `find` succeeds\.
+.
+.P
+If no arguments are specified, returns \fB1\fR\.
 .
 .SH "SEE ALSO"
 Project page: \fIhttps://github\.com/landonb/fries\-findup\fR

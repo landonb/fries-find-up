@@ -5,16 +5,26 @@ fries-findup(1) -- Bash "Invursive" up-dir file finder
 SYNOPSIS
 --------
 
-findup [-v|--version] [-h|--help] <name>
+findup [-v|--version] [-h|--help] <exact-name>
 
-<name> is the file name to search for.
+findup [-v|--version] [-h|--help] <start-directory> <exact-name>
 
+findup [-v|--version] [-h|--help] <start-directory> <arg-to-\`find\`> <arg-to-\`find\`>...
+
+<exact-name> is the exact file name for which to search.
+
+<start-directory> is the path to the directory from which to start searching.
+If not specified, defaults to the current directory.
+
+<arg-to-\`find\`>... are 2 or more arguments to pass to the `find` command,
+instead of searching for an exact file name to match.
 
 DESCRIPTION
 -----------
 
 `fries-findup` is a simple shell function to walk up a directory
-tree searching for a matching file.
+tree searching for a matching file, or to walk up a directory tree
+and run the \`find\` command on each ancestor.
 
 A common use case is being inside a subdirectory of a project and
 looking for a project stored at the root of the project. E.g., you
@@ -35,24 +45,60 @@ OPTIONS
 OUTPUT
 ------
 
-Prints the path name of the matching file, if found.
+If an <exact-name> is specified, prints the path name of the first
+matching file of the same exact name, if found.
 
 For example,
 
     $ tmpdir=$(mktemp -d)
-    $ cd $tmpdir
+    $ cd ${tmpdir}
     $ git init .
     $ mkdir test
     $ cd test
-    $ invursive_find .git
+    $ fries-findup .git
     /tmp/tmp.XXXXXXXXXX/.git
 
+If a <start-directory> and an <exact-name> are specified, searches
+up from the starting directory and prints the path name of the first
+matching file found.
+
+If 2 or more <arg-to-find> are specified, prints whatever the `find` command outputs.
+
+For example, you'll see the same output for some searches,
+
+    $ cd path/to/fries-findup/bin
+
+    $ ./fries-findup.sh README.rst
+    path/to/fries-findup/README.rst
+
+    $ ./fries-findup.sh . README.rst
+    path/to/fries-findup/README.rst
+
+    $ ./fries-findup.sh . -name README.rst
+    path/to/fries-findup/README.rst
+
+but not for others,
+
+    $ cd path/to/fries-findup/bin
+
+    $ ./fries-findup.sh "*I*N*"
+
+    $ ./fries-findup.sh . "*I*N*"
+
+    $ ./fries-findup.sh . -name "*I*N*"
+    path/to/fries-findup/LICENSE
+    path/to/fries-findup/VERSION
 
 EXIT STATUS
 -----------
 
-The `invursive_find` function returns a value of `0` if a matching file
-is found, or `1` if no file was found.
+If searching for an <exact-name> and a matching file is found, returns `0`;
+otherwise returns `1`.
+
+If 2 or more <arg-to-find> are specified and using \`find\`, returns the
+first non-zero \`find\` return value, or `0` if every \`find\` succeeds.
+
+If no arguments are specified, returns `1`.
 
 
 SEE ALSO
