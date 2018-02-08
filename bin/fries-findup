@@ -4,7 +4,7 @@
 VERSION=0.0.3
 
 print_version_and_exit () {
-  # NOTE: If sourced and called, then $(basename -- $0) is 'bash'.
+  # Use hard coded name, not $0, which is 'bash' when file is sourced.
   >&2 echo "fries-findup version ${VERSION}"
   exit 0
 }
@@ -56,19 +56,22 @@ fries-findup () {
   local firstarg; first_one=$(parse_first_positional "${@}") || return $?
   # File path is empty if command already handled, e.g., -v, or -h, etc.
   [[ -z ${first_one} ]] && return
+
   # Shake off $first_one. Remainder is optional arguments to `find`.
   shift
 
   local filename=''
   local dirpath=''
   if [[ ${#} -eq 0 ]]; then
+    # No more arguments, so not using `find`; looking for exact match.
+    # Start searching from the directory relative to what's being sought.
     filename=$(basename -- "${first_one}")
     dirpath=$(dirname -- "${first_one}")
   else
     # 2 or 3+ args: first one is directory.
     dirpath=${first_one}
     # If just 2 args, second is filename; otherwise, 3+ args,
-    # and we pass everything except directory path to `find`.
+    # and we pass everything to `find`.
     if [[ ${#} -eq 1 ]]; then
       # User specified 2 args: directory to start from, and file to find.
       filename=$1
@@ -76,8 +79,8 @@ fries-findup () {
     fi
   fi
 
-  # Deal only in full paths.
-  # Symlinks okay (hence not `pwd -P` or `readlink -f`).
+  # Deal only in full paths. Symlinks are okay
+  # (hence not `pwd -P` or `readlink -f`).
   pushd ${dirpath} &> /dev/null
   dirpath=$(pwd)
   popd &> /dev/null
@@ -112,12 +115,6 @@ fries-findup () {
     dirpath=$(dirname -- "${dirpath}")
   done
 
-  # Here's how chruby/auto.sh does the same:
-  #   local dir="$PWD/"
-  #   until [[ -z "$dir" ]]; do
-  #       dir="${dir%/*}"
-  #       if ... fi
-  #   done
 
   if [[ ${#} -eq 0 ]]; then
     if [[ -n "${invursive_path}" ]]; then
