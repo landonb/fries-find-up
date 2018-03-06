@@ -85,7 +85,16 @@ fries-findup () {
 
   # Deal only in full paths. Symlinks are okay
   # (hence not `pwd -P` or `readlink -f`).
-  pushd ${dirpath} &> /dev/null
+  # 2018-03-05: Aha! I was seeing "ruby-2.3.3 is not installed."
+  #   when running this command, and it's because rvm is complaining.
+  #   When you cd to a dir an rvm cannot find the .ruby-version, e.g..
+  #       ruby-2.3.3 is not installed.
+  #       To install do: 'rvm install ruby-2.3.3'
+  # Trash the whole message. We don't want to see that noise.
+  #pushd ${dirpath} &> /dev/null
+  # Why, oh why, does rvm write errors using >&6 file descriptor?
+  #   I had to rummage in the blathering rvm source to figure this out.
+  pushd ${dirpath} &> /dev/null 6>&1
   dirpath=$(pwd)
   popd &> /dev/null
 
@@ -118,7 +127,6 @@ fries-findup () {
     # - Easy answer:
     dirpath=$(dirname -- "${dirpath}")
   done
-
 
   if [[ ${#} -eq 0 ]]; then
     if [[ -n "${invursive_path}" ]]; then
