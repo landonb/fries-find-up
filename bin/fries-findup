@@ -94,7 +94,7 @@ fries-findup () {
   #pushd ${dirpath} &> /dev/null
   # Why, oh why, does rvm write errors using >&6 file descriptor?
   #   I had to rummage in the blathering rvm source to figure this out.
-  pushd ${dirpath} &> /dev/null 6>&1
+  pushd "${dirpath}" &> /dev/null 6>&1
   dirpath=$(pwd)
   popd &> /dev/null
 
@@ -141,7 +141,7 @@ fries-findup () {
 }
 
 main () {
-  if [[ ${BASH_SOURCE[0]} != $0 ]]; then
+  if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
     export -f fries-findup
   else
     fries-findup "${@}"
