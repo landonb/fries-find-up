@@ -45,7 +45,7 @@ parse_first_positional () {
     shift
   done
   if [[ -z ${first_one} ]]; then
-    >&2 echo 'Missing one of: <exact-name> | <start-directory> <exact-name> | <directory> <arg-to-`find`> <arg-to-`find`>...'
+    >&2 echo 'Missing one of: <exact-name> | <start-directory> <exact-name> | <directory> <args-to-`find`...>'
     exit 2
   fi
   echo "${first_one}"
