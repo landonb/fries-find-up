@@ -122,10 +122,11 @@ help:
 		| sort \
 		| /bin/sed 's/^/  /'
 
-# LEARNING: .PHONY specifies that the target name is *meta*.
-#   I.e., without .PHONY, the target name would match a file
-#   of the same name. Using .PHONY tells make that this target is
-#   not a filename but rather something the user types after `make`.
+# LEARNING: .PHONY specifies that the target name is an internal
+#   Makefile name, and not a file name, otherwise Make will first
+#   check for a file of the same name as the target.
+#     https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
+#   So while not always required, it's a best practice to use it.
 .PHONY : release
 release:
 	sed -i'' "s/^\( *\)VERSION=.*/\1VERSION=`cat VERSION`/" bin/* install.sh
