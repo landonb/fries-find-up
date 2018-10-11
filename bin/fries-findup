@@ -1,17 +1,25 @@
 #!/bin/bash
 # vim:tw=0:ts=2:sw=2:et:ft=sh:
 
-VERSION=0.0.3
+before_command () {
+  FRIES__CMDNAME="fries-findup"
+  FRIES__VERSION=0.0.3
+}
+
+after_command () {
+  unset FRIES__CMDNAME
+  unset FRIES__VERSION
+}
 
 print_version_and_exit () {
   # Use hard coded name, not $0, which is 'bash' when file is sourced.
-  >&2 echo "fries-findup version ${VERSION}"
+  >&2 echo "${FRIES__CMDNAME} version ${FRIES__VERSION}"
   exit 0
 }
 
 print_help_and_exit () {
-  >&2 echo 'Usage: fries-findup [-v|--version] [-h|--help] <name>'
-  >&2 echo 'See `man fries-findup` for more help'
+  >&2 echo "Usage: ${FRIES__CMDNAME} [-v|--version] [-h|--help] <name>"
+  >&2 echo "See \`man ${FRIES__CMDNAME}\` for more help"
   exit 0
 }
 
@@ -141,11 +149,13 @@ fries-findup () {
 }
 
 main () {
+  before_command
   if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
     export -f fries-findup
   else
     fries-findup "${@}"
   fi
+  after_command
 }
 
 main "${@}"
