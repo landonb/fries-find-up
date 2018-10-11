@@ -109,7 +109,8 @@ Run any of these commands as the superuser to install systemwide to ``/usr/local
 
     $ clib install landonb/fries-findup
 
-After installing, source the installed file (see below for doing this automatically)::
+After installing, source the installed file
+(see `Update $PATH`_ for doing this automatically)::
 
   source /usr/local/bin/fries-findup
 
