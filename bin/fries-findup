@@ -19,7 +19,7 @@ print_version_and_exit () {
 
 print_help_and_exit () {
   >&2 echo "Usage: ${FRIES__CMDNAME} [-v|--version] [-h|--help] <name>"
-  >&2 echo "See \`man ${FRIES__CMDNAME}\` for more help"
+  >&2 echo "See \$(man ${FRIES__CMDNAME}) for more help"
   exit 0
 }
 
