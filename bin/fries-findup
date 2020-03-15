@@ -150,12 +150,15 @@ fries-findup () {
 
 main () {
   before_command
+  local exit_code
   if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
     export -f fries-findup
   else
     fries-findup "${@}"
+    exit_code=$?
   fi
   after_command
+  return ${exit_code}
 }
 
 main "${@}"
