@@ -205,7 +205,7 @@ prepareManDirs:
 	@find man/ \
 		-iname "*.[0-9]" \
 		-exec /bin/bash -c \
-			"echo {} | /bin/sed -r 's~.*([0-9])$$~$(MANDIR)/man\1~'" \; \
+			"echo {} | /bin/sed -E 's~.*([0-9])$$~$(MANDIR)/man\1~'" \; \
 	| sort \
 	| uniq \
 	| xargs mkdir -p
@@ -216,7 +216,7 @@ installMan:
 		-iname "*.[0-9]" \
 		-exec /bin/bash -c \
 			"echo {} \
-				| /bin/sed -r 's~(.*)([0-9])$$~install \1\2 $(MANDIR)/man\2/~' \
+				| /bin/sed -E 's~(.*)([0-9])$$~install \1\2 $(MANDIR)/man\2/~' \
 				| source /dev/stdin" \;
 
 .PHONY : uninstallMan
@@ -226,7 +226,7 @@ uninstallMan:
 			-iname "*.[0-9]" \
 			-exec /bin/bash -c \
 				"echo {} \
-					| /bin/sed -r 's~(.*)([0-9])$$~[[ -f $(MANDIR)/man\2/\1\2 \&\& ! -h $(MANDIR)/man\2/\1\2 ]] \&\& /bin/rm $(MANDIR)/man\2/\1\2 || true~' \
+					| /bin/sed -E 's~(.*)([0-9])$$~[[ -f $(MANDIR)/man\2/\1\2 \&\& ! -h $(MANDIR)/man\2/\1\2 ]] \&\& /bin/rm $(MANDIR)/man\2/\1\2 || true~' \
 					| source /dev/stdin" \;
 
 .PHONY : linkMan
@@ -235,7 +235,7 @@ linkMan:
 		-iname "*.[0-9]" \
 		-exec /bin/bash -c \
 			"echo {} \
-				| /bin/sed -r 's~(.*)([0-9])$$~/bin/ln -sf \$$(realpath $(mkfile_base)/\1\2) $(MANDIR)/man\2/~' \
+				| /bin/sed -E 's~(.*)([0-9])$$~/bin/ln -sf \$$(realpath $(mkfile_base)/\1\2) $(MANDIR)/man\2/~' \
 				| source /dev/stdin" \;
 
 .PHONY : unlinkMan
@@ -245,7 +245,7 @@ unlinkMan:
 			-iname "*.[0-9]" \
 			-exec /bin/bash -c \
 				"echo {} \
-					| /bin/sed -r 's~(.*)([0-9])$$~[[ -h $(MANDIR)/man\2/\1\2 ]] \&\& /bin/rm $(MANDIR)/man\2/\1\2 || true~' \
+					| /bin/sed -E 's~(.*)([0-9])$$~[[ -h $(MANDIR)/man\2/\1\2 ]] \&\& /bin/rm $(MANDIR)/man\2/\1\2 || true~' \
 					| source /dev/stdin" \;
 
 .PHONY : compileMan
