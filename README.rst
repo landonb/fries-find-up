@@ -78,11 +78,11 @@ Run any of these commands as the superuser to install systemwide to ``/usr/local
 
   ::
 
-    $ curl -Lo- "https://raw.githubusercontent.com/landonb/fries-findup/master/install.sh" | bash
+    $ curl -Lo- "https://raw.githubusercontent.com/landonb/fries-findup/release/install.sh" | bash
 
   Which, if you trust me, you could run as root::
 
-    sudo /bin/bash -c 'curl -Lo- "https://raw.githubusercontent.com/landonb/fries-findup/master/install.sh" | bash'
+    sudo /bin/bash -c 'curl -Lo- "https://raw.githubusercontent.com/landonb/fries-findup/release/install.sh" | bash'
 
 - Install systemwide using
   `bpkg <https://github.com/bpkg/bpkg>`__,
@@ -178,8 +178,8 @@ But you probably want to install to a directory on ``PATH``, or to update
   and for sourcing shell scripts.
 
   If not, you might want to consider a helper function, such as
-  ``path_add_part`` from `fries-pathadd
-  <https://github.com/landonb/fries-pathadd/blob/master/bin/fries-pathadd#L24>`__,
+  ``path_suffix`` from `sh-pather
+  <https://github.com/landonb/sh-pather/blob/release/bin/path_suffix#L8>`__,
   to add to ``PATH`` without creating duplicate entries.
 
   Or, if you are lazy and just wanna wing it, you can run this command
