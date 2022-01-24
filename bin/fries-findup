@@ -92,14 +92,14 @@ fries-findup () {
   fi
 
   # Deal only in full paths. Symlinks are okay
-  # (hence not `pwd -P` or `readlink -f`).
+  # (hence we don't use `pwd -P`, `readlink -f`, or `realpath`).
   # 2018-03-05: Aha! I was seeing "ruby-2.3.3 is not installed."
   #   when running this command, and it's because rvm is complaining.
   #   When you cd to a dir an rvm cannot find the .ruby-version, e.g..
   #       ruby-2.3.3 is not installed.
   #       To install do: 'rvm install ruby-2.3.3'
   # Trash the whole message. We don't want to see that noise.
-  #pushd ${dirpath} &> /dev/null
+  #  pushd ${dirpath} &> /dev/null
   # Why, oh why, does rvm write errors using >&6 file descriptor?
   #   I had to rummage in the blathering rvm source to figure this out.
   pushd "${dirpath}" &> /dev/null 6>&1
@@ -129,9 +129,12 @@ fries-findup () {
     fi
     # Get the parent directory.
     # - If you want to follow symlinks:
-    #  dirpath="$(readlink -f "${dirpath}"/..)"
+    #     dirpath="$(realpath -- "${dirpath}"/..)"
+    #   Equivalently:
+    #     dirpath="$(readlink -f -- "${dirpath}"/..)"
     # - If you want to be literal (not follow symlinks) but not use dirname?:
-    #  dirpath="$(realpath -s "${dirpath}"/..)"
+    #     dirpath="$(realpath -s "${dirpath}"/..)"
+    #     # There is not readlink equivalent for not following symlinks.
     # - Easy answer:
     dirpath=$(dirname -- "${dirpath}")
   done
