@@ -165,7 +165,7 @@ linkBin:
 	@mkdir -p $(TARGET) || exit 1
 	@cd $(mkfile_base)/bin \
 		&& find . -type f -exec /usr/bin/env bash -c \
-			"ln -sf \$$(realpath $(mkfile_base)/bin/{}) $(TARGET)/" \;
+			"ln -sf \$$(realpath -- $(mkfile_base)/bin/{}) $(TARGET)/" \;
 
 .PHONY : unlinkBin
 unlinkBin:
@@ -235,7 +235,7 @@ linkMan:
 		-iname "*.[0-9]" \
 		-exec /usr/bin/env bash -c \
 			"echo {} \
-				| /usr/bin/env sed -E 's~(.*)([0-9])$$~/bin/ln -sf \$$(realpath $(mkfile_base)/\1\2) $(MANDIR)/man\2/~' \
+				| /usr/bin/env sed -E 's~(.*)([0-9])$$~/bin/ln -sf \$$(realpath -- $(mkfile_base)/\1\2) $(MANDIR)/man\2/~' \
 				| source /dev/stdin" \;
 
 .PHONY : unlinkMan
