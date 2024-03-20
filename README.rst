@@ -131,7 +131,7 @@ Install to Use
     $ cd ${tmpdir}
     $ PREFIX=anywhere/you/like make install
     $ cd ..
-    $ /bin/rm -rf $(basename -- "${tmpdir}")
+    $ command rm -rf -- "$(basename -- "${tmpdir}")"
 
 Install to Develop
 ~~~~~~~~~~~~~~~~~~

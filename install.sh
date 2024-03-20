@@ -15,5 +15,5 @@ curl -sL ${REPOTAR} | gunzip | tar xf -
 cd ${REPODIR}
 make install
 cd ${TMPDIR}
-rm -rf ${REPODIR}
+command rm -rf -- "${REPODIR}"
 
