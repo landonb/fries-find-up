@@ -110,17 +110,17 @@ endif
 #   make -qp |
 #     awk -F':' '/^[a-zA-Z0-9][^$$#\/\t=]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' |
 #     sort |
-#     /usr/bin/env sed 's/^/  /'
+#     sed 's/^/  /'
 # so I'll just go the simpler route and parse the .PHONY list.
 .PHONY : help
 help:
 	@echo "Please choose a target for make:"
 	@make -qp \
 		| grep "^\.PHONY" \
-		| /usr/bin/env sed 's/^\.PHONY: //' \
+		| sed 's/^\.PHONY: //' \
 		| tr ' ' "\n" \
 		| sort \
-		| /usr/bin/env sed 's/^/  /'
+		| sed 's/^/  /'
 
 # LEARNING: .PHONY specifies that the target name is an internal
 #   Makefile name, and not a file name, otherwise Make will first
@@ -129,8 +129,8 @@ help:
 #   So while not always required, it's a best practice to use it.
 .PHONY : release
 release:
-	/usr/bin/env sed -i'' "s/^\( *\)VERSION=.*/\1VERSION=`cat VERSION`/" bin/* install.sh
-	/usr/bin/env sed -i'' "s/^\( *\)\"version\":.*/\1\"version\": \"`cat VERSION`\",/" package.json
+	sed -i'' "s/^\( *\)VERSION=.*/\1VERSION=`cat VERSION`/" bin/* install.sh
+	sed -i'' "s/^\( *\)\"version\":.*/\1\"version\": \"`cat VERSION`\",/" package.json
 	git add bin/* install.sh package.json
 	git commit -m "Release `cat VERSION`" || true
 	git push release release
@@ -157,20 +157,20 @@ installBin:
 .PHONY : uninstallBin
 uninstallBin:
 	@cd $(mkfile_base)/bin \
-		&& find . -type f -exec /usr/bin/env bash -c \
+		&& find . -type f -exec bash -c \
 			"[[ -f $(TARGET)/{} && ! -h $(TARGET)/{} ]] && rm -f $(TARGET)/{} || true" \;
 
 .PHONY : linkBin
 linkBin:
 	@mkdir -p $(TARGET) || exit 1
 	@cd $(mkfile_base)/bin \
-		&& find . -type f -exec /usr/bin/env bash -c \
+		&& find . -type f -exec bash -c \
 			"ln -sf \$$(realpath -- $(mkfile_base)/bin/{}) $(TARGET)/" \;
 
 .PHONY : unlinkBin
 unlinkBin:
 	@cd $(mkfile_base)/bin \
-		&& find . -type f -exec /usr/bin/env bash -c \
+		&& find . -type f -exec bash -c \
 			"[[ -h $(TARGET)/{} ]] && rm -f $(TARGET)/{} || true" \;
 
 # Both `uninstall` and `unlink` attempt to remove the
@@ -185,15 +185,15 @@ removeEmpties:
 # if we combined this rule and removeEmpties, such that we had:
 #   removeEmpties:
 #     @[ -d $(MANDIR) ] && find $(MANDIR) -type d -empty -delete || true
-#     @echo $(shell /usr/bin/env ls -1 $(MANDIR))
+#     @echo $(shell ls -1 $(MANDIR))
 # surprisingly, the ls command shows the empty directories that you'd
 # think the previous line had deleted! So make these separate rules.
 .PHONY : removeManBaseMaybe
 removeManBaseMaybe:
-	@$(eval num_remaining := $(shell /usr/bin/env ls -1 $(MANDIR) 2> /dev/null | wc -l))
+	@$(eval num_remaining := $(shell ls -1 $(MANDIR) 2> /dev/null | wc -l))
 	@[ $(num_remaining) -eq 1 ] \
 		&& [ -f $(MANDIR)/index.db ] \
-		&& /bin/rm $(MANDIR)/index.db \
+		&& rm $(MANDIR)/index.db \
 		&& rmdir $(MANDIR) \
 		|| true
 
@@ -204,8 +204,8 @@ prepareManDirs:
 	@#       avoid needing to escape path characters.
 	@find man/ \
 		-iname "*.[0-9]" \
-		-exec /usr/bin/env bash -c \
-			"echo {} | /usr/bin/env sed -E 's~.*([0-9])$$~$(MANDIR)/man\1~'" \; \
+		-exec bash -c \
+			"echo {} | sed -E 's~.*([0-9])$$~$(MANDIR)/man\1~'" \; \
 	| sort \
 	| uniq \
 	| xargs mkdir -p
@@ -214,9 +214,9 @@ prepareManDirs:
 installMan:
 	@find man/ \
 		-iname "*.[0-9]" \
-		-exec /usr/bin/env bash -c \
+		-exec bash -c \
 			"echo {} \
-				| /usr/bin/env sed -E 's~(.*)([0-9])$$~install \1\2 $(MANDIR)/man\2/~' \
+				| sed -E 's~(.*)([0-9])$$~install \1\2 $(MANDIR)/man\2/~' \
 				| source /dev/stdin" \;
 
 .PHONY : uninstallMan
@@ -224,18 +224,18 @@ uninstallMan:
 	@cd $(mkfile_base)/man \
 		&& find . \
 			-iname "*.[0-9]" \
-			-exec /usr/bin/env bash -c \
+			-exec bash -c \
 				"echo {} \
-					| /usr/bin/env sed -E 's~(.*)([0-9])$$~[[ -f $(MANDIR)/man\2/\1\2 \&\& ! -h $(MANDIR)/man\2/\1\2 ]] \&\& /bin/rm $(MANDIR)/man\2/\1\2 || true~' \
+					| sed -E 's~(.*)([0-9])$$~[[ -f $(MANDIR)/man\2/\1\2 \&\& ! -h $(MANDIR)/man\2/\1\2 ]] \&\& rm $(MANDIR)/man\2/\1\2 || true~' \
 					| source /dev/stdin" \;
 
 .PHONY : linkMan
 linkMan:
 	@find man/ \
 		-iname "*.[0-9]" \
-		-exec /usr/bin/env bash -c \
+		-exec bash -c \
 			"echo {} \
-				| /usr/bin/env sed -E 's~(.*)([0-9])$$~/bin/ln -sf \$$(realpath -- $(mkfile_base)/\1\2) $(MANDIR)/man\2/~' \
+				| sed -E 's~(.*)([0-9])$$~ln -sf \$$(realpath -- $(mkfile_base)/\1\2) $(MANDIR)/man\2/~' \
 				| source /dev/stdin" \;
 
 .PHONY : unlinkMan
@@ -243,9 +243,9 @@ unlinkMan:
 	@cd $(mkfile_base)/man \
 		&& find . \
 			-iname "*.[0-9]" \
-			-exec /usr/bin/env bash -c \
+			-exec bash -c \
 				"echo {} \
-					| /usr/bin/env sed -E 's~(.*)([0-9])$$~[[ -h $(MANDIR)/man\2/\1\2 ]] \&\& /bin/rm $(MANDIR)/man\2/\1\2 || true~' \
+					| sed -E 's~(.*)([0-9])$$~[[ -h $(MANDIR)/man\2/\1\2 ]] \&\& rm $(MANDIR)/man\2/\1\2 || true~' \
 					| source /dev/stdin" \;
 
 .PHONY : compileMan
