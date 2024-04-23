@@ -248,6 +248,7 @@ unlinkMan:
 					| sed -E 's~(.*)([0-9])$$~[[ -h $(MANDIR)/man\2/\1\2 ]] \&\& rm $(MANDIR)/man\2/\1\2 || true~' \
 					| source /dev/stdin" \;
 
+# Deps: $(os_is_macos && echo brew || echo apt) install man-db
 .PHONY : compileMan
 compileMan:
 	@mandb > /dev/null 2>&1
