@@ -154,7 +154,7 @@ fries-findup () {
 main () {
   before_command
   local exit_code
-  if [[ ${BASH_SOURCE[0]} != "$0" ]]; then
+  if [ "${BASH_SOURCE[0]}" != "$0" ]; then
     export -f fries-findup
   else
     fries-findup "${@}"
